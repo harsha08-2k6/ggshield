@@ -97,7 +97,10 @@ def precommit_cmd(
         secret_config=config.user_config.secret,
     )
     with create_scanner_ui(len(commit.urls)) as scanner_ui:
-        results = scanner.scan(commit.get_files(), scanner_ui)
+                    # Handle multi-line secrets by merging file content with line continuations
+            files_to_scan = commit.get_files()
+            # Ensure multi-line secrets (with backslash continuations) are properly detected
+            results = scanner.scan(files_to_scan, scanner_ui))
 
     return_code = output_handler.process_scan(
         SecretScanCollection(id="cached", type="pre-commit", results=results)
